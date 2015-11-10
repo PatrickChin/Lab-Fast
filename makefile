@@ -1,13 +1,20 @@
+CC=gcc
+CFAGS=-c -std=c99 -H -Wall
+LDFLAGS=-lm
+
+
 all: muon tobin
 
+
 muon: muon.o
-	gcc -o muon muon.o -lm 
+	$(CC) $(LDFLAGS) muon.o
 
 muon.o: muon.c
-	gcc muon.c -c -std=c99 -H -Wall
+	$(CC) $(CFLAGS) muon.c
+
 
 tobin: tobin.o
-	gcc -o tobin tobin.o
+	$(CC) tobin.o
 
 tobin.o: tobin.c
-	gcc tobin.c -c -std=c99 -H -Wall
+	$(CC) $(CFLAGS) tobin.c 
