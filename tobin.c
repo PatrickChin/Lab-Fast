@@ -4,6 +4,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+/**
+ * Native implementation of atoll.
+ * Increments the `str` pointer
+ */
 long long atoll2(char** str)
 {
     long long val = 0;
@@ -20,7 +24,13 @@ long long atoll2(char** str)
 int main(int argc, char *argv[])
 {
     if (argc != 3)
+    {
+        printf("Useage: tobin ascii_datafile binary_file\n"
+               "    ascii_datafile - the name of the file containing muon data\n"
+               "    binary_file - the name of the file to write the binary data "
+               "to. This file needn't exist.\n");
         return 1;
+    }
 
     int fd = open(argv[1], O_RDONLY);
     if (fd < 0)
@@ -42,6 +52,8 @@ int main(int argc, char *argv[])
         if (strdata[i] == '\n' || strdata[i] == '\r')
         {
             strdata[i++] = ' ';
+            // second itteration for windows' stupid \n\r newlines
+            // this took me ages to fkin debug
             if (strdata[i] == '\n' || strdata[i] == '\r')
                 strdata[i] = ' ';
             ++nrows;
