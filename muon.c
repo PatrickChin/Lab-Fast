@@ -118,12 +118,13 @@ int main(int argc, char *argv[])
         {
             if (argc < 4) {
                 fprintf(stderr, "\nError: Please enter a binary file to write to as the third argument.\n"
-                        "    Continuing without writing a binary file.\n\n");
+                        "Continuing without writing a binary file.\n\n");
                 // TODO ask to continue/abort without writing to file
             } else {
                 FILE *fp = fopen(argv[3], "w+b");
                 if (!fp) {
-                    fprintf(stderr, "Failed to write to \"%s\".\n", argv[3]);
+                    fprintf(stderr, "Failed to write to \"%s\".\n"
+                            "Continuing without writing a binary file.\n\n", argv[3]);
                     // TODO ask to continue/abort without writing to file
                 } else {
                     fwrite(data, sizeof(mm), nrows, fp);
