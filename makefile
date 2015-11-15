@@ -1,6 +1,5 @@
 CC=gcc
-# CFLAGS=-c -std=c99 -H -Wall
-CFLAGS=-c -std=c99
+CFLAGS=-c -std=c99 -H -Wall
 LDFLAGS=-lm
 
 all: muon
