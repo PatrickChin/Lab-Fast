@@ -31,7 +31,7 @@ long long atoll2(char** str)
 
 mm* parse_ascii(char* c, int *nrows)
 {
-    *nrows = 1; // assuming the last line isn't empty
+    *nrows = 0;
     char *pos = c;
     while (*pos)
         if (*pos++ == '\n')
@@ -66,10 +66,11 @@ int request_abort()
 
 int main(int argc, char *argv[])
 {
-    if (argc < 5)
+
+    if (argc < 6)
     {
         printf("TODO - useage\n");
-        printf("muon infile minx maxx nbins\n");
+        printf("muon input_file min_time max_time num_bins background_time_start\n");
         return -1;
     }
 
@@ -86,8 +87,6 @@ int main(int argc, char *argv[])
     int nrows;
     mm* data;
 
-    // TODO assume ascii is default
-    // this will change indicies of argv
     char* strdata = (char*) malloc(fst.st_size);
     ssize_t read_size = read(fd, strdata, fst.st_size);
     close(fd);
@@ -103,79 +102,84 @@ int main(int argc, char *argv[])
     data = parse_ascii(strdata, &nrows);
     printf("Parsed %d rows of data.\n\n", nrows);
 
-
-    // for (int i = 0; i < 40; i++)
-    //    // printf("%3d %6i %10llu\n", i, data[i].decay_time, data[i].time_stamp);
-    // return 0;
-
     int minx = atoi(argv[2]),
         maxx = atoi(argv[3]),
         nbins = atoi(argv[4]),
+
         timescale = maxx-minx,
         binw = timescale/nbins,
-        counts = 0,
-        y[nbins];
+
+        bgx = atoi(argv[5]),
+        bgbin = bgx*nbins/timescale,
+
+        counts = 0;
+
+    int y[nbins];
     for (int i = 0; i < nbins; ++i) y[i] = 0;
 
     for (int i = 0; i < nrows; ++i)
     {
-        int j = (minx + data[i].decay_time) / binw;
+        int j = (data[i].decay_time - minx) / binw;
         if (j < nbins)
             y[j]++, counts++;
     }
 
-    double logy[nbins];
-    for (int i = 0; i < nbins; ++i)
-        logy[i] = log((double) y[i] + 1);
+    // double logy[nbins];
+    // for (int i = 0; i < nbins; ++i)
+    //     logy[i] = log((double) y[i] + 1);
 
     printf("minx %d\nbinw %d\nbins %d\ncounts %d\n", minx, binw, nbins, counts);
 
-    for (int i = 0; i < nbins; ++i)
-        printf("%4d   ", i);
-    printf("\n");
+    double wxx = 0, wx = 0, wc = 0, wxc = 0, kx2 = 0, sigw = 0, bg = 0,
+          bgbins = 0, deta, sigma, B = 0, K = 22000;
 
-    for (int i = 0; i < nbins; ++i)
-        printf("%4d   ", y[i]);
-    printf("\n");
-
-    for (int i = 0; i < nbins; ++i)
-        printf("%1.2f   ", logy[i]);
-    printf("\n");
-
-    float wxx = 0, wx = 0, wc = 0, wxc = 0, kx2 = 0, sigw = 0, bg = 0;
-
-    for (int i = 0; i < nbins; ++i)
+    for (int itt = 0; itt < 500; ++itt)
     {
-        float w = y[i] - bg;
-        if (w > 0)
+        if (timescale > bgx)
         {
-            float C = log(w);
-            float x = (i+0.5) * timescale / nbins;
-            wxx += w*x*x;
-            wx += w*x;
-            wc += w*C;
-            wxc += w*x*C;
-            sigw += w;
+            for (int i = bgbin; i < nbins; ++i)
+            {
+                double x = (i+0.5) * timescale / nbins + minx;
+                bgbins++, bg += y[i] - B*exp(-x/K);
+            }
+            if (bgbins > 0) bg /= bgbins;
+        }
+
+        for (int i = 0; i < bgbin && i < nbins; ++i)
+        {
+            double w = y[i] - bg;
+            if (w > 0)
+            {
+                double C = log(w);
+                double x = (i+0.5) * timescale / nbins + minx;
+                wxx += w*x*x;
+                wx += w*x;
+                wc += w*C;
+                wxc += w*x*C;
+                sigw += w;
+            }
+        }
+
+        deta = sigw*wxx - wx*wx;
+        B = exp((wc*wxx - wx*wxc) / deta);
+        K = - deta / (sigw*wxc - wx*wc);
+        sigma = K*K*sqrt(sigw/deta); 
+
+        for (int i = 0; i < nbins; ++i)
+        {
+           double w = y[i]-bg;
+           if (w > 1)
+           {
+               int x = (i+0.5)*timescale / nbins + minx;
+               double fx = B*exp(-x/K);
+               // kx2 += (w-fx)*(w-fx) / fx;
+               kx2 += w*w/fx + fx - 2*w;
+           }
         }
     }
 
-    float deta = sigw*wxx - wx*wx;
-    float B = exp((wc*wxx - wx*wxc) / deta);
-    float K = - deta / (sigw*wxc - wx*wc);
-
-    float sigma = K*K*sqrt(sigw/deta); 
-
-    for (int i = 0; i < nbins; ++i)
-    {
-       float w = y[i]-bg;
-       if (w > 1)
-       {
-           int x = (i+0.5)*timescale / nbins;
-           kx2 += (w - B*exp(-x/K)) * (w - B*exp(-x/K)) / w;
-       }
-    }
-
-    printf("B = %f\nK = %f\nsigma = %f\n", B, K, sigma);
+    printf("B = %.8f\nK = %.8f\nsigma = %.8f\nbg = %.8f\nkx2 = %.8f\n\n", B, K, sigma, bg, kx2 / (nbins-2));
 
     return 0;
 }
+
