@@ -42,7 +42,6 @@ mm* parse_ascii(char* c, int *nrows)
     {
         data[i].decay_time = atoll2(&c);
         data[i].time_stamp = atoll2(&c);
-        // printf("%3d %6i %10llu\n", i, data[i].decay_time, data[i].time_stamp);
     }
 
     return data;
@@ -54,7 +53,7 @@ int request_abort()
     size_t len = 0;
     while (1)
     {
-        fprintf(stderr, "Abort? [y/n]: ");
+        printf("Abort? [y/n]: ");
         getline(&abort, &len, stdin);
         // "\x0A" is the new line feed from getline
         if (!strcmp(abort, "yes\x0A") || !strcmp(abort, "y\x0A"))
@@ -67,10 +66,10 @@ int request_abort()
 int main(int argc, char *argv[])
 {
 
-    if (argc < 6)
+    if (argc != 6)
     {
         printf("TODO - useage\n");
-        printf("muon infile tmin tmax nbins bg_t_start\n");
+        printf("muon inputfile tmin tmax nbins bg_t_start\n");
         return -1;
     }
 
@@ -94,7 +93,7 @@ int main(int argc, char *argv[])
 
     if (read_size != fst.st_size)
     {
-        fprintf(stderr, "\nError: Only read %d of the requested %ld.\n", read_size, fst.st_size);
+        printf("\nError: Only read %d of the requested %ld.\n", read_size, fst.st_size);
         if (request_abort())
             return 1;
     }
@@ -107,13 +106,18 @@ int main(int argc, char *argv[])
         nbins = atoi(argv[4]),
 
         timescale = maxx-minx,
-        binw = timescale/nbins,
 
         bgx = atoi(argv[5]),
         bgbin = bgx*nbins/timescale,
 
         counts = 0,
-        counts4k = 0;
+        counts4k = 0,
+        totalt = data[nrows-1].time_stamp - data[0].time_stamp;
+    double binw = timescale/nbins;
+
+    printf("minx = %d\n"
+           "binw %f\n"
+           "bins %d\n", minx, binw, nbins);
 
     int y[nbins];
     for (int i = 0; i < nbins; ++i) y[i] = 0;
@@ -123,9 +127,10 @@ int main(int argc, char *argv[])
         if (data[i].decay_time >= 40000)
             counts4k++;
         else {
-            int d = data[i].decay_time - minx;
-            if (d < 0) continue; // ignore counts less than minx
-            y[d / binw]++, counts++;
+            if (data[i].decay_time >= maxx) continue;
+            if (data[i].decay_time <= minx) continue;
+            y[(int) ((data[i].decay_time - minx) / binw)]++;
+            counts++;
         }
     }
 
@@ -139,43 +144,52 @@ int main(int argc, char *argv[])
             stdevbg += bgy[j] * bgy[j];
             j++;
         }
+    printf("bg counts: %.8f\n", avgbg);
     avgbg /= counts4k;
     stdevbg = sqrt(stdevbg/counts4k - avgbg*avgbg);
 
     printf("bg counts/second: %.8f (%.8f)\n", avgbg, stdevbg);
+    printf("total seconds: %d\n", totalt);
 
-    double ynorm[nbins];
+    double ynorm[nbins], dynorm[nbins];
     for (int i = 0; i < nbins; ++i)
+    {
         ynorm[i] = ((double) y[i]) / binw;
+        dynorm[i] = sqrt(y[i]) / binw;
+    }
 
-    // for (int i = 0; i < nbins; ++i)
-    //     printf("%5f ", ynorm[i]);
-    // printf("\n");
+    fprintf(stderr, "t count dcount\n");
+    for (int i = 0; i < nbins; ++i)
+        fprintf(stderr, "%.2f %d %.8f\n", (0.5*binw + i*binw), y[i], sqrt(y[i]));
+        // fprintf(stderr, "%.2f %.8f %.8f\n", (0.5*binw + i*binw), ynorm[i], dynorm[i]);
 
     // double logy[nbins];
     // for (int i = 0; i < nbins; ++i)
     //     logy[i] = log((double) y[i] + 1);
 
-    printf("minx %d\nbinw %d\nbins %d\ncounts %d\n", minx, binw, nbins, counts);
+    printf("counts %d\n", counts);
 
-    double wxx = 0, wx = 0, wc = 0, wxc = 0, kx2 = 0, sigw = 0, bg = 0,
-          bgbins = 0, deta, sigma, B = 0, K = 22000;
+    double wxx = 0, wx = 0, wc = 0, wxc = 0, kx2 = 0, sigw = 0, y0 = 0,
+          bgbins = 0, deta, sigma, A0 = 0, tau = 22000;
 
-    for (int itt = 0; itt < 3; ++itt) // number of time to do the linear regression
+    for (int itt = 0; itt < 3; ++itt) // number of time to remove background counts
     {
+
         if (timescale > bgx)
         {
             for (int i = bgbin; i < nbins; ++i)
             {
                 double x = (i+0.5) * timescale / nbins + minx;
-                bgbins++, bg += ynorm[i] - B*exp(-x/K);
+                bgbins++;
+                y0 += ynorm[i] - A0*exp(-x/tau);
             }
-            if (bgbins > 0) bg /= bgbins;
+            if (bgbins > 0)
+                y0 /= bgbins;
         }
 
         for (int i = 0; i < bgbin && i < nbins; ++i)
         {
-            double w = ynorm[i] - bg;
+            double w = ynorm[i] - y0;
             if (w > 0)
             {
                 double C = log(w);
@@ -188,25 +202,31 @@ int main(int argc, char *argv[])
             }
         }
 
-        deta = sigw*wxx - wx*wx;
-        B = exp((wc*wxx - wx*wxc) / deta);  // background distribution
-        K = - deta / (sigw*wxc - wx*wc);    // decay constant i.e. muon lifetime
-        sigma = K*K*sqrt(sigw/deta); 
+        deta = sigw*wxx - wx*wx; // temp variable
+        A0 = exp((wc*wxx - wx*wxc) / deta); // background distribution
+        tau = - deta / (sigw*wxc - wx*wc); // decay constant i.e. muon lifetime
+        sigma = tau*tau*sqrt(sigw/deta); 
 
         for (int i = 0; i < nbins; ++i)
         {
-           double w = ynorm[i]-bg;
+           double w = ynorm[i]-y0;
            if (w > 1)
            {
                int x = (i+0.5)*timescale / nbins + minx;
-               double fx = B*exp(-x/K);
+               double fx = A0*exp(-x/tau);
                // kx2 += (w-fx)*(w-fx) / fx;
                kx2 += w*w/fx + fx - 2*w;
            }
         }
     }
 
-    printf("bg = %.8f\nt = %.8f\nsigma = %.8f\nkx2 = %.8f\n\n", B, K, sigma, kx2 / (nbins-2));
+    printf("A0 = %.8f\n"
+           "tau = %.8f\n"
+           "y0 = %.8f\n"
+           "sigma = %.8f\n"
+           "kx2 = %.8f\n"
+           "\n",
+           A0, tau, y0, sigma, kx2 / (nbins-2));
 
     return 0;
 }
