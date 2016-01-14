@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
 
     if (argc != 6)
     {
-        printf("TODO - useage\n");
         printf("muon inputfile tmin tmax nbins bg_t_start\n");
         return -1;
     }
@@ -80,6 +79,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // get the file size
     struct stat fst;
     fstat(fd, &fst);
 
@@ -107,11 +107,15 @@ int main(int argc, char *argv[])
 
         timescale = maxx-minx,
 
+        // the minimum time value we assume to be solely background counts
+        // this is rounded down to the nearest bin end
         bgx = atoi(argv[5]),
+
+        // the bin `bgx` is in
         bgbin = bgx*nbins/timescale,
 
-        counts = 0,
-        counts4k = 0,
+        counts = 0, // number of muon events
+        counts4k = 0, // number of 40000+ datapoints
         totalt = data[nrows-1].time_stamp - data[0].time_stamp;
     double binw = timescale/nbins;
 
@@ -119,38 +123,48 @@ int main(int argc, char *argv[])
            "binw %f\n"
            "bins %d\n", minx, binw, nbins);
 
-    int y[nbins];
-    for (int i = 0; i < nbins; ++i) y[i] = 0;
+    int y[nbins]; // counts in each bin
+    for (int i = 0; i < nbins; ++i) y[i] = 0; // initalize each y[i] to zero
 
+    int max4k = 0;
     for (int i = 0; i < nrows; ++i)
     {
         if (data[i].decay_time >= 40000)
+        {
             counts4k++;
-        else {
-            if (data[i].decay_time >= maxx) continue;
-            if (data[i].decay_time <= minx) continue;
-            y[(int) ((data[i].decay_time - minx) / binw)]++;
+
+            // find max n above 40000
+            max4k = data[i].decay_time > max4k ? data[i].decay_time : max4k;
+
+        } else {
+            if (data[i].decay_time >= maxx) continue; // ignore values bigger than maxx
+            if (data[i].decay_time <= minx) continue; // ignore values bigger than minx
+            y[(int) ((data[i].decay_time - minx) / binw)]++; // increment the bin that data[i] is to be placed in
             counts++;
         }
     }
 
-    int bgy[counts4k];
-    double avgbg = 0, stdevbg = 0;
-    for (int i = 0, j = 0; i < nrows; ++i)
-        if (data[i].decay_time >= 40000)
-        {
-            bgy[j] = data[i].decay_time - 40000;
-            avgbg += bgy[j];
-            stdevbg += bgy[j] * bgy[j];
-            j++;
-        }
-    printf("bg counts: %.8f\n", avgbg);
-    avgbg /= counts4k;
-    stdevbg = sqrt(stdevbg/counts4k - avgbg*avgbg);
 
-    printf("bg counts/second: %.8f (%.8f)\n", avgbg, stdevbg);
+    // Not sure if this works so commented it out
+
+    // int bgy[max4k]; // discrete background bin counts
+    // double avgbg = 0, stdevbg = 0;
+    // for (int i = 0, j = 0; i < nrows; ++i)
+    //     if (data[i].decay_time >= 40000)
+    //     {
+    //         bgy[data[i].decay_time - 40000]++;
+    //         stdevbg += bgy[j] * bgy[j];
+    //         j++;
+    //     }
+    // printf("bg counts: %.8f\n", counts4k);
+    // avgbg = counts4k / max4k;
+    // stdevbg = sqrt(stdevbg/counts4k - avgbg*avgbg);
+    // printf("bg counts/second: %.8f (%.8f)\n", avgbg, stdevbg);
+
     printf("total seconds: %d\n", totalt);
 
+    // dividing each bin count by the binwidth so histograms with different bin
+    // widths can be compared
     double ynorm[nbins], dynorm[nbins];
     for (int i = 0; i < nbins; ++i)
     {
