@@ -87,6 +87,8 @@ ssize_t muon_read_file(mm** data, int* nrows, char* f, int ascii)
 ssize_t muon_write_binary(mm** data, int size, char* file)
 {
     FILE* fp = fopen(file, "wb");
-    return fwrite((*data), sizeof(mm), size, fp);
+    size_t r = fwrite((*data), sizeof(mm), size, fp);
+    fclose(fp);
+    return r;
 }
 
