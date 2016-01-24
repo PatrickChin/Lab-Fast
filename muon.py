@@ -19,31 +19,22 @@ class muondata:
         self.analyse()
 
 
-
     def tobin(self):
         self.data.tofile(os.path.splitext(self.path)[0]+".bin")
 
     def analyse(self):
-        self.hist = np.histogram(self.data['decaytime'])
+        self.hist, self.bin_edges = np.histogram(self.data['decaytime'], bins=40)
+        self.mids = (self.bin_edges[1:] + self.bin_edges[:-1]) / 2
 
     def plot(self):
-        plt.plot(self.hist.index, self.hist.count)
+        plt.plot(self.mids, self.hist, '+')
+        plt.grid(True, which='both')
+        plt.yscale('log')
+        plt.xlabel('Decay time (ns)')
+        plt.ylabel('Counts per bin')
+        plt.show()
 
-
-        # if (path.endswith(".txt") or path.endswith(".dat")):
-        #     self.data = np.loadtxt(path, delimiter=" ")
-
-        #     # write to binary file
-        #     if tobin:
-        #         binpath = path[0:-3]+"bin"
-        #         data.tofile(binpath)
-
-        # elif (path.endswith(".bin")):
-        #     dt = np.dtype([('decaytime', '<u4'), ('timestamp', '<u4')])
-        #     self.data = np.fromfile(path, dtype=dt)
-
-        # else:
-        #     print("File should end in '.txt', '.dat' for ascii encoded files"
-        #           "or '.bin' for a binary encoded file")
 
 m = muondata('data.bin', True)
+m.analyse()
+m.plot()
