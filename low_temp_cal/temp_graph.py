@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 
 minv = 3
-maxv = 8
-initv = 5
+maxv = 4
+initv = 3
 
 dt = np.dtype([('time', np.float), ('temp', np.float)])
 data = []
 
-for i in range(minv, maxv):
+for i in range(minv, maxv+1):
     data.append(np.loadtxt('data/'+str(i)+'v.txt', delimiter=" "))
     print('loaded '+str(i)+'v.txt')
 
@@ -21,7 +21,7 @@ fig.add_axes(ax_graph)
 ax_slider = plt.axes([0.1, 0.05, 0.85, 0.04])
 fig.add_axes(ax_slider)
 slider = Slider(ax_slider, 'V', minv, maxv, initv, valfmt='%i')
-slider.prev_val = initv
+slider.prev_val = -1
 
 
 def updategraph(val):
@@ -37,6 +37,23 @@ ax_graph.set_xlabel('Time / s')
 ax_graph.set_ylabel('Temperature / Celcius')
 ax_graph.set_title('low cal graph test')
 
-slider.on_change(updategraph)
-updategraph()
+def evnthandler(event):
+    print 'button=%d, x=%d, y=%d'%(
+        event.button, event.xdata, event.ydata)
+
+connected = False
+kpe = None
+kre = None
+def connectlistener(e):
+    if connected:
+        fig.canvas.mpl_disconnect(kpe)
+        fig.canvas.mpl_disconnect(kre)
+    else:
+        kpe = fig.canvas.mpl_connect('button_press_event', evnthandler)
+        kre = fig.canvas.mpl_connect('button_release_event', evnthandler)
+
+fig.canvas.mpl_connect('key_press_event', connectlistener)
+
+slider.on_changed(updategraph)
+updategraph(initv)
 plt.show()
