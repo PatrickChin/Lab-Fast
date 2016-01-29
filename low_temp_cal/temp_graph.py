@@ -2,8 +2,29 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from matplotlib.widgets import Slider, Button
 
+class LowTempGUI():
+
+    def __init__(self):
+        self.fig = plt.figure()
+        
+        self.fig.add_axes(ax_graph)
+
+        ax_graph = plt.axes([0.1, 0.2, 0.85, 0.7])
+        fig.add_axes(ax_graph)
+
+        self.ax_slider = plt.axes([0.1, 0.05, 0.85, 0.04])
+        self.fig.add_axes(ax_slider)
+        self.slider = Slider(ax_slider, 'V', minv, maxv, initv, valfmt='%i')
+        self.slider.prev_val = -1
+
+        self.ax_graph.set_xlabel('Time / s')
+        self.ax_graph.set_ylabel('Temperature / Celcius')
+        self.ax_graph.set_title('low cal graph test')
+
+
+
 minv = 3
-maxv = 4
+maxv = 7
 initv = 3
 
 dt = np.dtype([('time', np.float), ('temp', np.float)])
@@ -38,8 +59,7 @@ ax_graph.set_ylabel('Temperature / Celcius')
 ax_graph.set_title('low cal graph test')
 
 def evnthandler(event):
-    print 'button=%d, x=%d, y=%d'%(
-        event.button, event.xdata, event.ydata)
+    print('button={}, x={:.3f}, y={:.3f}'.format(event.button, event.xdata, event.ydata))
 
 connected = False
 kpe = None
