@@ -30,3 +30,10 @@
 
 # Debug files
 *.dSYM/
+
+# YCM files
+.ycm_extra_conf.py
+.ycm_extra_conf.pyc
+
+#tex
+muon/tex/*
