@@ -1,16 +1,25 @@
 #!/usr/bin/env python
 
 import numpy as np
+import matplotlib as mpl
+import scipy.stats as stat
+
 import matplotlib.pyplot as plt
 from matplotlib.widgets import SpanSelector
 import lowtempcal
 
+from Tkinter import Tk
+import tkFileDialog
+
 plt.style.use('bmh')
 
 filename = './7V.csv'
-# filename = raw_input("File name: ")
-
 measurement_interval = 0.5
+
+Tk().withdraw()
+filename = tkFileDialog.askopenfile()
+
+# filename = raw_input("File name: ")
 # measurement_interval = np.float(raw_input("Time interval: "))
 
 data = np.loadtxt(filename, delimiter=',', dtype=lowtempcal.dtype)
@@ -51,6 +60,7 @@ blockenter = True
 TBASE = 0
 TMAX = 1
 CV = 2
+NSTAGES = 3
 
 def calc_means(start,end):
     t = np.mean(np.array(temp[start:end]), dtype=np.float64)
@@ -92,11 +102,21 @@ def onselectbot(xmin, xmax):
         txt.set_text("$T_{{\mathrm{{base}}}} = {:.2f} ({:.2f})$\n"
                      "$T_{{\mathrm{{max}}}} = {:.2f} ({:.2f})$"
                      .format(tempbase, tempbasestd, tempmax, tempmaxstd))
-        ax2.set_title('Select area to to calculate base temperature')
+        ax2.set_title('Select area to perform linear regression on')
+    elif stage == CV:
+        slope, intercept, r_value, p_value, std_err = stat.linregress(time[indmin:indmax], temp[indmin:indmax])
+        txt.set_text("$T_{{\mathrm{{base}}}} = {:.2f} ({:.2f})$\n"
+                     "$T_{{\mathrm{{max}}}} = {:.2f} ({:.2f})$\n"
+                     "$\\frac{{dT}}{{dt}}|_\\kappa = {:.4f} ({:.6f})$"
+                     .format(tempbase, tempbasestd, tempmax, tempmaxstd, slope, std_err))
+        print("Gradient between {:.0f} and {:.0f}: {:.4f} ({:.6f})"
+                .format(xmin, xmax, slope, std_err))
+        stage -= 1 # don't continue
+
 
     fig.canvas.draw()
     stage += 1
-    stage %= 2
+    stage %= NSTAGES
 
 
 def onkeypress(event):
@@ -104,15 +124,18 @@ def onkeypress(event):
     if event.key == u'enter' and not blockenter:
         blockenter = True
         if stage == TMAX:
-            stage = TBASE
             ax2.set_title('Select area to to calculate base temperature')
             txt.set_text("$T_{{\mathrm{{base}}}} =  ?$\n"
                          "$T_{{\mathrm{{max}}}} =  ?$")
-        elif stage == TBASE:
-            stage = TMAX
+        elif stage == CV:
             txt.set_text("$T_{{\mathrm{{base}}}} = {:.2f} ({:.2f})$\n"
                          "$T_{{\mathrm{{max}}}} =  ?$".format(tempbase, tempbasestd))
             ax2.set_title('Select area to to calculate max temperature and thermal conductivity')
+        elif stage == TBASE:
+            return
+
+        stage -= 1
+        stage %= NSTAGES
 
         fig.canvas.draw()
 
