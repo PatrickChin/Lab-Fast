@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import SpanSelector
 import lowtempcal
 
-from Tkinter import Tk
-import tkFileDialog
+from tkinter import Tk, filedialog
 
 plt.style.use('bmh')
 
@@ -17,7 +16,7 @@ filename = './7V.csv'
 measurement_interval = 0.5
 
 Tk().withdraw()
-filename = tkFileDialog.askopenfile()
+filename = filedialog.askopenfile()
 
 # filename = raw_input("File name: ")
 # measurement_interval = np.float(raw_input("Time interval: "))
