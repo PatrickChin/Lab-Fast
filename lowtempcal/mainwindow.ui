@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>527</height>
+    <width>1228</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,12 +55,26 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>200</width>
+        <width>16777215</width>
         <height>16777215</height>
        </size>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="2" column="0">
+        <widget class="QPushButton" name="button_select_all">
+         <property name="text">
+          <string>Select All</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="button_deselect_all">
+         <property name="text">
+          <string>Deselect All</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
         <widget class="QListWidget" name="file_list">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -72,14 +86,11 @@
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::MultiSelection</enum>
-         </property>
-         <property name="resizeMode">
-          <enum>QListView::Adjust</enum>
+          <enum>QAbstractItemView::SingleSelection</enum>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="0" colspan="2">
         <widget class="QPushButton" name="file_import_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -92,39 +103,61 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QPushButton" name="button_replot">
+         <property name="text">
+          <string>Re-Plot</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item>
      <widget class="QWidget" name="value_widget" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>150</width>
+        <width>230</width>
         <height>440</height>
        </size>
       </property>
       <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0" colspan="2">
+       <property name="leftMargin">
+        <number>15</number>
+       </property>
+       <property name="rightMargin">
+        <number>15</number>
+       </property>
+       <item row="2" column="0" colspan="2">
         <widget class="QRadioButton" name="tbase_radio">
          <property name="text">
           <string>BaseTemperature</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_1">
          <property name="text">
           <string>Start</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <widget class="QDoubleSpinBox" name="tbase_start">
          <property name="maximum">
           <double>50000.000000000000000</double>
@@ -134,14 +167,17 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>End</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="4" column="1">
         <widget class="QDoubleSpinBox" name="tbase_end">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -154,14 +190,17 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Value</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="5" column="1">
         <widget class="QDoubleSpinBox" name="tbase_value">
          <property name="readOnly">
           <bool>true</bool>
@@ -171,14 +210,17 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>Stdev</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="6" column="1">
         <widget class="QDoubleSpinBox" name="tbase_std">
          <property name="readOnly">
           <bool>true</bool>
@@ -188,21 +230,24 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
         <widget class="QRadioButton" name="tmax_radio">
          <property name="text">
           <string>Maximum Temperature</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Start</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="8" column="1">
         <widget class="QDoubleSpinBox" name="tmax_start">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -215,14 +260,17 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="9" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>End</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="9" column="1">
         <widget class="QDoubleSpinBox" name="tmax_end">
          <property name="maximum">
           <double>50000.000000000000000</double>
@@ -232,14 +280,17 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="10" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Value</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="8" column="1">
+       <item row="10" column="1">
         <widget class="QDoubleSpinBox" name="tmax_value">
          <property name="readOnly">
           <bool>true</bool>
@@ -249,14 +300,17 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="11" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>Stdev</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="11" column="1">
         <widget class="QDoubleSpinBox" name="tmax_std">
          <property name="readOnly">
           <bool>true</bool>
@@ -266,21 +320,24 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0" colspan="2">
+       <item row="12" column="0" colspan="2">
         <widget class="QRadioButton" name="cv_radio">
          <property name="text">
           <string>Specific Heat </string>
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
+       <item row="13" column="0">
         <widget class="QLabel" name="label_12">
          <property name="text">
           <string>Start</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="11" column="1">
+       <item row="13" column="1">
         <widget class="QDoubleSpinBox" name="cv_start">
          <property name="maximum">
           <double>50000.000000000000000</double>
@@ -290,14 +347,17 @@
          </property>
         </widget>
        </item>
-       <item row="12" column="0">
+       <item row="14" column="0">
         <widget class="QLabel" name="label_9">
          <property name="text">
           <string>End</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="12" column="1">
+       <item row="14" column="1">
         <widget class="QDoubleSpinBox" name="cv_end">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -310,14 +370,17 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="0">
+       <item row="15" column="0">
         <widget class="QLabel" name="label_11">
          <property name="text">
           <string>Value</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="13" column="1">
+       <item row="15" column="1">
         <widget class="QDoubleSpinBox" name="cv_value">
          <property name="readOnly">
           <bool>true</bool>
@@ -327,14 +390,17 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="0">
+       <item row="16" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
           <string>Stdev</string>
          </property>
+         <property name="indent">
+          <number>27</number>
+         </property>
         </widget>
        </item>
-       <item row="14" column="1">
+       <item row="16" column="1">
         <widget class="QDoubleSpinBox" name="cv_std">
          <property name="readOnly">
           <bool>true</bool>
@@ -343,6 +409,16 @@
           <enum>QAbstractSpinBox::NoButtons</enum>
          </property>
         </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Time Interval</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QDoubleSpinBox" name="spinbox_dt"/>
        </item>
       </layout>
      </widget>
