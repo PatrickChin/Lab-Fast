@@ -60,13 +60,6 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="0">
-        <widget class="QPushButton" name="button_select_all">
-         <property name="text">
-          <string>Select All</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1">
         <widget class="QPushButton" name="button_deselect_all">
          <property name="text">
@@ -74,19 +67,10 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QListWidget" name="file_list">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="button_select_all">
+         <property name="text">
+          <string>Select All</string>
          </property>
         </widget>
        </item>
@@ -110,6 +94,22 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QListWidget" name="file_list">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -123,7 +123,7 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>230</width>
+        <width>200</width>
         <height>440</height>
        </size>
       </property>
@@ -132,17 +132,17 @@
         <number>15</number>
        </property>
        <property name="rightMargin">
-        <number>15</number>
+        <number>5</number>
        </property>
-       <item row="2" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <widget class="QRadioButton" name="tbase_radio">
          <property name="text">
           <string>BaseTemperature</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_1">
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_tbase_start">
          <property name="text">
           <string>Start</string>
          </property>
@@ -157,7 +157,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="6" column="1">
         <widget class="QDoubleSpinBox" name="tbase_start">
          <property name="maximum">
           <double>50000.000000000000000</double>
@@ -167,8 +167,8 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_2">
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_tbase_end">
          <property name="text">
           <string>End</string>
          </property>
@@ -177,7 +177,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="7" column="1">
         <widget class="QDoubleSpinBox" name="tbase_end">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -190,8 +190,8 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_3">
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_tbase_value">
          <property name="text">
           <string>Value</string>
          </property>
@@ -200,7 +200,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="8" column="1">
         <widget class="QDoubleSpinBox" name="tbase_value">
          <property name="readOnly">
           <bool>true</bool>
@@ -210,8 +210,8 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_7">
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_tbase_std">
          <property name="text">
           <string>Stdev</string>
          </property>
@@ -220,7 +220,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="9" column="1">
         <widget class="QDoubleSpinBox" name="tbase_std">
          <property name="readOnly">
           <bool>true</bool>
@@ -230,15 +230,15 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="10" column="0" colspan="2">
         <widget class="QRadioButton" name="tmax_radio">
          <property name="text">
           <string>Maximum Temperature</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_6">
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_tmax_start">
          <property name="text">
           <string>Start</string>
          </property>
@@ -247,7 +247,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
+       <item row="11" column="1">
         <widget class="QDoubleSpinBox" name="tmax_start">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -260,8 +260,8 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_5">
+       <item row="12" column="0">
+        <widget class="QLabel" name="label_tmax_end">
          <property name="text">
           <string>End</string>
          </property>
@@ -270,7 +270,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="12" column="1">
         <widget class="QDoubleSpinBox" name="tmax_end">
          <property name="maximum">
           <double>50000.000000000000000</double>
@@ -280,8 +280,8 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="label_4">
+       <item row="13" column="0">
+        <widget class="QLabel" name="label_tmax_value">
          <property name="text">
           <string>Value</string>
          </property>
@@ -290,7 +290,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="13" column="1">
         <widget class="QDoubleSpinBox" name="tmax_value">
          <property name="readOnly">
           <bool>true</bool>
@@ -300,8 +300,8 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="label_8">
+       <item row="14" column="0">
+        <widget class="QLabel" name="label_tmax_std">
          <property name="text">
           <string>Stdev</string>
          </property>
@@ -310,7 +310,7 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="1">
+       <item row="14" column="1">
         <widget class="QDoubleSpinBox" name="tmax_std">
          <property name="readOnly">
           <bool>true</bool>
@@ -320,15 +320,15 @@
          </property>
         </widget>
        </item>
-       <item row="12" column="0" colspan="2">
+       <item row="15" column="0" colspan="2">
         <widget class="QRadioButton" name="cv_radio">
          <property name="text">
           <string>Specific Heat </string>
          </property>
         </widget>
        </item>
-       <item row="13" column="0">
-        <widget class="QLabel" name="label_12">
+       <item row="16" column="0">
+        <widget class="QLabel" name="label_cv_start">
          <property name="text">
           <string>Start</string>
          </property>
@@ -337,7 +337,7 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
+       <item row="16" column="1">
         <widget class="QDoubleSpinBox" name="cv_start">
          <property name="maximum">
           <double>50000.000000000000000</double>
@@ -347,8 +347,8 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="0">
-        <widget class="QLabel" name="label_9">
+       <item row="17" column="0">
+        <widget class="QLabel" name="label_cv_end">
          <property name="text">
           <string>End</string>
          </property>
@@ -357,7 +357,7 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
+       <item row="17" column="1">
         <widget class="QDoubleSpinBox" name="cv_end">
          <property name="buttonSymbols">
           <enum>QAbstractSpinBox::UpDownArrows</enum>
@@ -370,8 +370,8 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="0">
-        <widget class="QLabel" name="label_11">
+       <item row="18" column="0">
+        <widget class="QLabel" name="label_cv_value">
          <property name="text">
           <string>Value</string>
          </property>
@@ -380,7 +380,7 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="1">
+       <item row="18" column="1">
         <widget class="QDoubleSpinBox" name="cv_value">
          <property name="readOnly">
           <bool>true</bool>
@@ -390,8 +390,8 @@
          </property>
         </widget>
        </item>
-       <item row="16" column="0">
-        <widget class="QLabel" name="label_10">
+       <item row="19" column="0">
+        <widget class="QLabel" name="label_cv_std">
          <property name="text">
           <string>Stdev</string>
          </property>
@@ -400,7 +400,7 @@
          </property>
         </widget>
        </item>
-       <item row="16" column="1">
+       <item row="19" column="1">
         <widget class="QDoubleSpinBox" name="cv_std">
          <property name="readOnly">
           <bool>true</bool>
@@ -410,14 +410,24 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="label">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_voltage">
          <property name="text">
-          <string>Time Interval</string>
+          <string>Voltage</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="spinbox_voltage"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_dt">
+         <property name="text">
+          <string>Time Step</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="spinbox_dt"/>
        </item>
       </layout>

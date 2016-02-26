@@ -46,9 +46,13 @@ class LowTempCalApp(QtGui.QMainWindow, Ui_MainWindow):
 
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
+        self.ax.set_ylim(70,140)
         self.canvas = FigureCanvas(self.fig)
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
+
+        self.toolbar = NavigationToolbar(self.canvas, self, coordinates=True)
+        self.graph_layout.addWidget(self.toolbar)
  
         self.prev_dir = '.'
         self.file_import_button.clicked.connect(self.import_file)
@@ -58,11 +62,51 @@ class LowTempCalApp(QtGui.QMainWindow, Ui_MainWindow):
         self.button_deselect_all.clicked.connect(self.deselect_all)
         self.button_replot.clicked.connect(self.replot)
 
+        self.tbase_radio.toggled.connect(self.tbase_toggle)
+        self.tmax_radio.toggled.connect(self.tmax_toggle)
+        self.cv_radio.toggled.connect(self.cv_toggle)
+
+        self.tbase_toggle(False)
+        self.tmax_toggle(False)
+        self.cv_toggle(False)
+        # QtGui.QRadioButton.
+
+    def tbase_toggle(self, enabled):
+        self.tbase_start.setEnabled(enabled)
+        self.tbase_end.setEnabled(enabled)
+        self.tbase_std.setEnabled(enabled)
+        self.tbase_value.setEnabled(enabled)
+        self.label_tbase_start.setEnabled(enabled)
+        self.label_tbase_end.setEnabled(enabled)
+        self.label_tbase_std.setEnabled(enabled)
+        self.label_tbase_value.setEnabled(enabled)
+
+    def tmax_toggle(self, enabled):
+        self.tmax_start.setEnabled(enabled)
+        self.tmax_end.setEnabled(enabled)
+        self.tmax_std.setEnabled(enabled)
+        self.tmax_value.setEnabled(enabled)
+        self.label_tmax_start.setEnabled(enabled)
+        self.label_tmax_end.setEnabled(enabled)
+        self.label_tmax_std.setEnabled(enabled)
+        self.label_tmax_value.setEnabled(enabled)
+
+    def cv_toggle(self, enabled):
+        self.cv_start.setEnabled(enabled)
+        self.cv_end.setEnabled(enabled)
+        self.cv_std.setEnabled(enabled)
+        self.cv_value.setEnabled(enabled)
+        self.label_cv_start.setEnabled(enabled)
+        self.label_cv_end.setEnabled(enabled)
+        self.label_cv_std.setEnabled(enabled)
+        self.label_cv_value.setEnabled(enabled)
+
     def replot(self):
         for i in range(self.file_list.count()):
             item = self.file_list.item(i)
             show = item.checkState()
             item.line.set_visible(show)
+        self.ax.legend()
         self.canvas.draw()
 
     def deselect_all(self):
@@ -90,7 +134,7 @@ class LowTempCalApp(QtGui.QMainWindow, Ui_MainWindow):
             item = LowTempCalItem.from_file(f)
             item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
             item.setCheckState(QtCore.Qt.Checked)
-            line, = self.ax.plot(item.data['time'], item.data['temperature'])
+            line, = self.ax.plot(item.data['time'], item.data['temperature'], label=os.path.basename(f))
             line.set_visible(False)
             item.line = line
 
