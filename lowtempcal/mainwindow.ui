@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>main_window</class>
+ <widget class="QMainWindow" name="main_window">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1228</width>
-    <height>562</height>
+    <width>954</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
+  <widget class="QWidget" name="main_widget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>1</horstretch>
@@ -38,85 +38,11 @@
      <height>400</height>
     </size>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QWidget" name="file_widget" native="true">
+     <widget class="QScrollArea" name="value_area">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="1">
-        <widget class="QPushButton" name="button_deselect_all">
-         <property name="text">
-          <string>Deselect All</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="button_select_all">
-         <property name="text">
-          <string>Select All</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QPushButton" name="file_import_button">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Import Files</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QPushButton" name="button_replot">
-         <property name="text">
-          <string>Re-Plot</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QListWidget" name="file_list">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="value_widget" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -124,313 +50,79 @@
       <property name="minimumSize">
        <size>
         <width>200</width>
-        <height>440</height>
+        <height>0</height>
        </size>
       </property>
-      <layout class="QFormLayout" name="formLayout">
-       <property name="leftMargin">
-        <number>15</number>
+      <property name="maximumSize">
+       <size>
+        <width>240</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="value_widget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>238</width>
+         <height>544</height>
+        </rect>
        </property>
-       <property name="rightMargin">
-        <number>5</number>
-       </property>
-       <item row="5" column="0" colspan="2">
-        <widget class="QRadioButton" name="tbase_radio">
-         <property name="text">
-          <string>BaseTemperature</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_tbase_start">
-         <property name="text">
-          <string>Start</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QDoubleSpinBox" name="tbase_start">
-         <property name="maximum">
-          <double>50000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>1000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_tbase_end">
-         <property name="text">
-          <string>End</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QDoubleSpinBox" name="tbase_end">
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="maximum">
-          <double>50000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>2000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_tbase_value">
-         <property name="text">
-          <string>Value</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QDoubleSpinBox" name="tbase_value">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_tbase_std">
-         <property name="text">
-          <string>Stdev</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QDoubleSpinBox" name="tbase_std">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0" colspan="2">
-        <widget class="QRadioButton" name="tmax_radio">
-         <property name="text">
-          <string>Maximum Temperature</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="label_tmax_start">
-         <property name="text">
-          <string>Start</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QDoubleSpinBox" name="tmax_start">
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="maximum">
-          <double>50000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>8000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="label_tmax_end">
-         <property name="text">
-          <string>End</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="1">
-        <widget class="QDoubleSpinBox" name="tmax_end">
-         <property name="maximum">
-          <double>50000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>10000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <widget class="QLabel" name="label_tmax_value">
-         <property name="text">
-          <string>Value</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="1">
-        <widget class="QDoubleSpinBox" name="tmax_value">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <widget class="QLabel" name="label_tmax_std">
-         <property name="text">
-          <string>Stdev</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="1">
-        <widget class="QDoubleSpinBox" name="tmax_std">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0" colspan="2">
-        <widget class="QRadioButton" name="cv_radio">
-         <property name="text">
-          <string>Specific Heat </string>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="0">
-        <widget class="QLabel" name="label_cv_start">
-         <property name="text">
-          <string>Start</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="1">
-        <widget class="QDoubleSpinBox" name="cv_start">
-         <property name="maximum">
-          <double>50000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>10000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="0">
-        <widget class="QLabel" name="label_cv_end">
-         <property name="text">
-          <string>End</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="1">
-        <widget class="QDoubleSpinBox" name="cv_end">
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::UpDownArrows</enum>
-         </property>
-         <property name="maximum">
-          <double>50000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>8000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="18" column="0">
-        <widget class="QLabel" name="label_cv_value">
-         <property name="text">
-          <string>Value</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="18" column="1">
-        <widget class="QDoubleSpinBox" name="cv_value">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="19" column="0">
-        <widget class="QLabel" name="label_cv_std">
-         <property name="text">
-          <string>Stdev</string>
-         </property>
-         <property name="indent">
-          <number>27</number>
-         </property>
-        </widget>
-       </item>
-       <item row="19" column="1">
-        <widget class="QDoubleSpinBox" name="cv_std">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_voltage">
-         <property name="text">
-          <string>Voltage</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="spinbox_voltage"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_dt">
-         <property name="text">
-          <string>Time Step</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QDoubleSpinBox" name="spinbox_dt"/>
-       </item>
-      </layout>
+       <layout class="QFormLayout" name="value_layout">
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_voltage">
+          <property name="text">
+           <string>Voltage</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="spinbox_voltage"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_dt">
+          <property name="text">
+           <string>Time Step</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QDoubleSpinBox" name="spinbox_dt"/>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QPushButton" name="file_import_button">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Import Files</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QComboBox" name="file_list_box"/>
+        </item>
+       </layout>
+       <zorder>label_voltage</zorder>
+       <zorder>label_dt</zorder>
+       <zorder>spinbox_voltage</zorder>
+       <zorder>spinbox_dt</zorder>
+       <zorder>label_voltage</zorder>
+       <zorder>label_dt</zorder>
+       <zorder>spinbox_voltage</zorder>
+       <zorder>spinbox_dt</zorder>
+       <zorder>file_import_button</zorder>
+       <zorder>file_list_box</zorder>
+      </widget>
      </widget>
     </item>
     <item>
