@@ -233,10 +233,10 @@ if __name__ == '__main__':
     # app.setStyle("breeze")
     main = LowTempCalApp()
     main.import_files([
-        '/home/patrick/workspace/labfast/lowtempcal/data/2V',
-        '/home/patrick/workspace/labfast/lowtempcal/data/3V',
-        '/home/patrick/workspace/labfast/lowtempcal/data/4V',
-        '/home/patrick/workspace/labfast/lowtempcal/data/5V'
+        './data/2V',
+        './data/3V',
+        './data/4V',
+        './data/5V'
     ])
     main.file_change(0)
 
