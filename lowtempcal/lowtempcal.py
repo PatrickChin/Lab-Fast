@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from scipy import stats
 import scipy.constants as const
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.uic import loadUiType
@@ -87,6 +88,9 @@ class LowTempCalData:
 
     def __init__(self, filename, voltage=0, dt=1.0):
         self.voltage = voltage
+
+        if dt < 0.01:
+            raise ValueError("Your time interval is smaler than 0.01? Really?? ...")
         self.dt = dt
 
         self.tmin_x1 = 1
@@ -146,10 +150,6 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.tmin_group.radio)
         self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.tmin_group)
 
-        # self.kt_group = LowTempCalValueGroup("Thermal Conductivity", self.value_layout)
-        # self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.kt_group.radio)
-        # self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.kt_group)
-
         self.cv_group = LowTempCalValueGroup("Specific Heat", self.value_layout)
         self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.cv_group.radio)
         self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.cv_group)
@@ -158,25 +158,38 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
         self.span = SpanSelector(self.ax, self.on_span_select, 'horizontal', useblit=False,
-                span_stays=False, rectprops=dict(alpha=0.2, facecolor='blue') )
+                span_stays=False, rectprops=dict(alpha=0.1, facecolor='blue') )
 
     def on_span_select(self, x1, x2):
         d = self.data[self.cur_index]
         x1 = max(0, int(x1/d.dt))
         x2 = min(len(d.data)-1, int(x2/d.dt))
+        temp = d.data['temperature'][x1:x2]
+        time = d.data['time'][x1:x2]
         if self.tmax_group.radio.isChecked():
-            val = np.mean(np.array(d.data['temperature'][x1:x2]))
-            std = np.std(np.array(d.data['temperature'][x1:x2]))
+            val = np.mean(temp, dtype=np.float96)
+            std = np.std(temp, dtype=np.float96)
             self.tmax_group.set_values(x1, x2, val, std)
+            d.tmax_x1 = x1
+            d.tmax_x2 = x2
+            d.tmax_val = val
+            d.tmax_std = std
         elif self.tmin_group.radio.isChecked():
-            val = np.mean(np.array(d.data['temperature'][x1:x2]))
-            std = np.std(np.array(d.data['temperature'][x1:x2]))
+            val = np.mean(temp, dtype=np.float96)
+            std = np.std(temp, dtype=np.float96)
             self.tmin_group.set_values(x1, x2, val, std)
-
+            d.tmin_x1 = x1
+            d.tmin_x2 = x2
+            d.tmin_val = val
+            d.tmin_std = std
         elif self.cv_group.radio.isChecked():
-            val = np.mean(np.array(d.data['temperature'][x1:x2]))
-            std = np.std(np.array(d.data['temperature'][x1:x2]))
-            self.cv_group.set_values(x1, x2, val, std)
+            slope, intercept, r_value, p_value, std = stats.linregress(time, temp)
+            self.cv_group.set_values(x1, x2, slope, std)
+            d.cv_x1 = x1
+            d.cv_x2 = x2
+            d.cv_val = slope
+            d.cv_std = std
+            print(slope)
 
     def file_change(self, index):
         self.cur_index = index
