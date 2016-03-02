@@ -15,6 +15,31 @@ from matplotlib.backends.backend_qt5agg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
 
+class LowTempCalData:
+
+    dtype = np.dtype([('time',np.int), ('current',np.float),
+        ('voltage',np.float), ('temperature',np.float)])
+
+    def __init__(self, filename):
+        self.voltage = 1
+        self.length = 1
+        self.area = 1
+        self.dt = 1
+
+        self.tmin_x1 = 1
+        self.tmin_x2 = 1
+        self.tmin = 1
+        self.tmin_std = 1
+
+        self.tmax_x1 = 1
+        self.tmax_x2 = 1
+        self.tmax = 1
+        self.tmax_std = 1
+
+        self.data = np.loadtxt(filename, delimiter=',', dtype=LowTempCalData.dtype)[::-1]
+        self.line = Line2D(self.data['time'], self.data['temperature'], label=os.path.basename(filename), visible=False)
+        self.line_current = Line2D(self.data['time'], self.data['current'], label=os.path.basename(filename), visible=False, color="red")
+
 Ui_MainWindow, QMainWindow = loadUiType('mainwindow.ui')
 
 class LowTempCalValueGroup(QtWidgets.QWidget):
@@ -45,9 +70,9 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
         self.end.setButtonSymbols(QtWidgets.QAbstractSpinBox.UpDownArrows)
         self.layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.end)
 
-        self.label_value = QtWidgets.QLabel("Value", parent=self)
-        self.label_value.setIndent(22)
-        self.layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_value)
+        self.labelue = QtWidgets.QLabel("Value", parent=self)
+        self.labelue.setIndent(22)
+        self.layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelue)
 
         self.value = QtWidgets.QDoubleSpinBox(self)
         self.value.setReadOnly(True)
@@ -65,71 +90,36 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
 
         self.setEnabled(False)
 
-    def set_values(self, x1, x2, val, std):
+    def setues(self, x1, x2, val, std):
         self.start.setValue(x1)
         self.end.setValue(x2)
         self.value.setValue(val)
         self.std.setValue(std)
 
-def calc_radiated_power(temp, surface_area=0.0010187, emissivity=0.04):
+def calc_radiated_power(temp, surface_area=1.0187e-3, emissivity=4e-2):
     return surface_area * emissivity * const.Stefan_Boltzmann * (temp**4)
 
-def calc_thermal_conductivity(power, iv, temp_diff, surface_area=5.655e-7, length=0.01):
-    return np.abs(length*(iv-power)/(surface_area*temp_diff))
+def calc_thermal_conductivity(radiated_power, iv, temp_diff, surface_area=5.655e-7, length=0.01):
+    return np.abs(length*(iv-radiated_power)/(surface_area*temp_diff))
 
 def calc_thermal_conductivity2(power, current, voltage, temp_diff, surface_area=5.655e-7, length=0.01):
     return np.abs(length*(current*voltage-power)/(surface_area*temp_diff))
 
 
-class LowTempCalData:
-
-    dtype = np.dtype([('time',np.int), ('current',np.float),
-        ('voltage',np.float), ('temperature',np.float)])
-
-    def __init__(self, filename, voltage=0, dt=1.0):
-        self.voltage = voltage
-
-        if dt < 0.01:
-            raise ValueError("Your time interval is smaler than 0.01? Really?? ...")
-        self.dt = dt
-
-        self.tmin_x1 = 1
-        self.tmin_x2 = 1
-        self.tmin_val = 1
-        self.tmin_std = 1
-
-        self.tmax_x1 = 1
-        self.tmax_x2 = 1
-        self.tmax_val = 1
-        self.tmax_std = 1
-
-        self.cv_x1 = 1
-        self.cv_x2 = 1
-        self.cv_val = 1
-        self.cv_std = 1
-
-        self.kt_x1 = 1
-        self.kt_x2 = 1
-        self.kt_val = 1
-        self.kt_std = 1
-
-        self.data = np.loadtxt(filename, delimiter=',', dtype=LowTempCalData.dtype)[::-1]
-        self.line = Line2D(self.data['time'], self.data['temperature'], label=os.path.basename(filename), visible=False)
-
-
 class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self):
-        super(LowTempCalApp, self).__init__()
+        super().__init__()
         self.setupUi(self)
 
-        self.fig = Figure()
-        self.ax = self.fig.add_subplot(111)
-        self.ax.set_ylim(70,140)
-        self.ax.set_xlim(0,14000)
+        self.fig = Figure(facecolor="white")
+        self.ax_current = self.fig.add_subplot(111, frameon=False)
+        self.ax_temp = self.ax_current.twinx()
         self.canvas = FigureCanvas(self.fig)
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
+
+        self.checkbox_show_current.stateChanged.connect(self.show_current_graph)
 
         self.toolbar = NavigationToolbar(self.canvas, self, coordinates=True)
         self.graph_layout.addWidget(self.toolbar)
@@ -143,22 +133,25 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.file_list_box.currentIndexChanged.connect(self.file_change)
 
         self.tmax_group = LowTempCalValueGroup("Max Temperature", self.value_layout)
-        self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.tmax_group.radio)
-        self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.tmax_group)
+        self.value_layout.addRow(self.tmax_group.radio)
+        self.value_layout.addRow(self.tmax_group)
 
         self.tmin_group = LowTempCalValueGroup("Min Temperature", self.value_layout)
-        self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.tmin_group.radio)
-        self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.tmin_group)
-
-        self.cv_group = LowTempCalValueGroup("Specific Heat", self.value_layout)
-        self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.cv_group.radio)
-        self.value_layout.setWidget(self.value_layout.count(), QtWidgets.QFormLayout.SpanningRole, self.cv_group)
+        self.value_layout.addRow(self.tmin_group.radio)
+        self.value_layout.addRow(self.tmin_group)
 
         self.tmax_group.radio.toggle()
 
-
-        self.span = SpanSelector(self.ax, self.on_span_select, 'horizontal', useblit=False,
+        self.span = SpanSelector(self.ax_temp, self.on_span_select, 'horizontal', useblit=False,
                 span_stays=False, rectprops=dict(alpha=0.1, facecolor='blue') )
+
+    def show_current_graph(self, state):
+        print("state: {}".format(state))
+        if state:
+            self.ax_current.set_axis_off()
+        else:
+            self.ax_current.set_axis_on()
+
 
     def on_span_select(self, x1, x2):
         d = self.data[self.cur_index]
@@ -167,29 +160,30 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         temp = d.data['temperature'][x1:x2]
         time = d.data['time'][x1:x2]
         if self.tmax_group.radio.isChecked():
-            val = np.mean(temp, dtype=np.float96)
-            std = np.std(temp, dtype=np.float96)
-            self.tmax_group.set_values(x1, x2, val, std)
+            val = np.mean(temp)
+            std = np.std(temp)
+            self.tmax_group.setues(x1, x2, val, std)
             d.tmax_x1 = x1
             d.tmax_x2 = x2
-            d.tmax_val = val
+            d.tmax = val
             d.tmax_std = std
         elif self.tmin_group.radio.isChecked():
-            val = np.mean(temp, dtype=np.float96)
-            std = np.std(temp, dtype=np.float96)
-            self.tmin_group.set_values(x1, x2, val, std)
+            val = np.mean(temp)
+            std = np.std(temp)
+            self.tmin_group.setues(x1, x2, val, std)
             d.tmin_x1 = x1
             d.tmin_x2 = x2
-            d.tmin_val = val
+            d.tmin = val
             d.tmin_std = std
-        elif self.cv_group.radio.isChecked():
-            slope, intercept, r_value, p_value, std = stats.linregress(time, temp)
-            self.cv_group.set_values(x1, x2, slope, std)
-            d.cv_x1 = x1
-            d.cv_x2 = x2
-            d.cv_val = slope
-            d.cv_std = std
-            print(slope)
+
+        # Only calculate for a temperature change larger than 0.1 degrees
+        dtemp = d.tmax - d.tmin 
+        if dtemp > 0.1:
+            power = calc_radiated_power(d.tmax) # , self.spinbox_area.value())
+            current = np.mean(d.data['current'][d.tmax_x1:d.tmax_x2])
+            d.voltage = self.spinbox_voltage.value()
+            d.kt = calc_thermal_conductivity(power, current*d.voltage, dtemp) #, self.spinbox_area.value(), self.spinbox_len.value())
+            self.spinbox_kt.setValue(d.kt)
 
     def file_change(self, index):
         self.cur_index = index
@@ -197,27 +191,23 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         for i, d in enumerate(self.data):
+            d.line_current.set_visible(i == index and self.checkbox_show_current.isChecked())
             d.line.set_visible(i == index)
-            # self.ax.lines[i].set_visible(i == index)
-        self.ax.relim(True)
-        self.ax.autoscale()
+        self.ax_current.relim(True)
+        self.ax_current.autoscale()
+        self.ax_temp.relim(True)
+        self.ax_temp.autoscale()
         self.canvas.draw()
 
         d = self.data[index]
-        self.tmax_group.set_values(d.tmax_x1, d.tmax_x2, d.tmax_val, d.tmax_std)
-        self.tmin_group.set_values(d.tmin_x1, d.tmin_x2, d.tmin_val, d.tmin_std)
-        self.cv_group.set_values(d.cv_x1, d.cv_x2, d.cv_val, d.cv_std)
-        # self.kt_group.set_values(d.kt_x1, d.kt_x2, d.kt_val, d.kt_std)
+        self.tmax_group.setues(d.tmax_x1, d.tmax_x2, d.tmax, d.tmax_std)
+        self.tmin_group.setues(d.tmin_x1, d.tmin_x2, d.tmin, d.tmin_std)
 
         ld = len(d.data)
         self.tmax_group.start.setMaximum(ld)
         self.tmin_group.start.setMaximum(ld)
-        self.cv_group.start.setMaximum(ld)
-        # self.kt_group.start.setMaximum(ld)
         self.tmax_group.end.setMaximum(ld)
         self.tmin_group.end.setMaximum(ld)
-        self.cv_group.end.setMaximum(ld)
-        # self.kt_group.end.setMaximum(ld)
 
     def import_dialog(self):
         filenames, _ = QtWidgets.QFileDialog.getOpenFileNames(
@@ -227,15 +217,19 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.import_files(filenames)
 
     def import_files(self, filenames):
+        print(self.filenames)
         for f in filenames:
+            f = os.path.abspath(f)
             if f in self.filenames:
                 print('Not importing \"{}\", it was already imported'.format(f))
                 continue
+            print("Adding \"{}\"".format(f))
             self.filenames.append(f)
             self.file_list_box.addItem(os.path.basename(f))
             item = LowTempCalData(f)
             self.data.append(item)
-            self.ax.add_line(item.line)
+            self.ax_temp.add_line(item.line)
+            self.ax_current.add_line(item.line_current)
             self.canvas.draw()
 
 

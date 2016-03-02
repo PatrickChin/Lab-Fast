@@ -75,24 +75,24 @@
         </rect>
        </property>
        <layout class="QFormLayout" name="value_layout">
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_voltage">
           <property name="text">
            <string>Voltage</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QDoubleSpinBox" name="spinbox_voltage"/>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_dt">
           <property name="text">
            <string>Time Step</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <widget class="QDoubleSpinBox" name="spinbox_dt"/>
         </item>
         <item row="0" column="0" colspan="2">
@@ -111,17 +111,92 @@
         <item row="1" column="0" colspan="2">
          <widget class="QComboBox" name="file_list_box"/>
         </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_kt">
+          <property name="text">
+           <string>Kt</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QDoubleSpinBox" name="spinbox_kt">
+          <property name="focusPolicy">
+           <enum>Qt::WheelFocus</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="maximum">
+           <double>20000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_len">
+          <property name="text">
+           <string>Length</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QDoubleSpinBox" name="spinbox_len"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_area">
+          <property name="text">
+           <string>Area</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="spinbox_area"/>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Power</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="maximum">
+           <double>20000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QCheckBox" name="checkbox_show_current">
+          <property name="text">
+           <string>Show current graph</string>
+          </property>
+         </widget>
+        </item>
        </layout>
-       <zorder>label_voltage</zorder>
-       <zorder>label_dt</zorder>
-       <zorder>spinbox_voltage</zorder>
-       <zorder>spinbox_dt</zorder>
        <zorder>label_voltage</zorder>
        <zorder>label_dt</zorder>
        <zorder>spinbox_voltage</zorder>
        <zorder>spinbox_dt</zorder>
        <zorder>file_import_button</zorder>
        <zorder>file_list_box</zorder>
+       <zorder>label_kt</zorder>
+       <zorder>spinbox_kt</zorder>
+       <zorder>label_len</zorder>
+       <zorder>spinbox_len</zorder>
+       <zorder>label_area</zorder>
+       <zorder>spinbox_area</zorder>
+       <zorder>label</zorder>
+       <zorder>doubleSpinBox</zorder>
+       <zorder>checkbox_show_current</zorder>
       </widget>
      </widget>
     </item>
