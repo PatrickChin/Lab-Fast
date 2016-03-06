@@ -142,7 +142,7 @@
          </widget>
         </item>
         <item row="5" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_len"/>
+         <widget class="QDoubleSpinBox" name="spinbox_length"/>
         </item>
         <item row="6" column="0">
          <widget class="QLabel" name="label_area">
@@ -162,7 +162,7 @@
          </widget>
         </item>
         <item row="7" column="1">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox">
+         <widget class="QDoubleSpinBox" name="spinbox_power">
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -191,11 +191,11 @@
        <zorder>label_kt</zorder>
        <zorder>spinbox_kt</zorder>
        <zorder>label_len</zorder>
-       <zorder>spinbox_len</zorder>
+       <zorder>spinbox_length</zorder>
        <zorder>label_area</zorder>
        <zorder>spinbox_area</zorder>
        <zorder>label</zorder>
-       <zorder>doubleSpinBox</zorder>
+       <zorder>spinbox_power</zorder>
        <zorder>checkbox_show_current</zorder>
       </widget>
      </widget>
