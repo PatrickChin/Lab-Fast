@@ -74,7 +74,7 @@
          <height>544</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="value_layout">
         <item>
          <widget class="QPushButton" name="file_import_button">
           <property name="sizePolicy">
@@ -144,7 +144,11 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QDoubleSpinBox" name="spinbox_area"/>
+            <widget class="QDoubleSpinBox" name="spinbox_area">
+             <property name="decimals">
+              <number>5</number>
+             </property>
+            </widget>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_len">
@@ -154,7 +158,11 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="spinbox_length"/>
+            <widget class="QDoubleSpinBox" name="spinbox_length">
+             <property name="decimals">
+              <number>5</number>
+             </property>
+            </widget>
            </item>
           </layout>
           <zorder>spinbox_power</zorder>
@@ -192,6 +200,9 @@
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
              <property name="maximum">
               <double>20000.000000000000000</double>
              </property>
@@ -214,6 +225,9 @@
              </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>5</number>
              </property>
              <property name="maximum">
               <double>20000.000000000000000</double>

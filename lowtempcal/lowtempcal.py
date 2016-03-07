@@ -72,7 +72,7 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
         # Radio button is added to parent
         self.radio = QtWidgets.QRadioButton(text)
         self.radio.toggled.connect(self.setEnabled)
-        parent.addRow(self.radio)
+        parent.addWidget(self.radio)
 
         self.label_start = QtWidgets.QLabel("Start", parent=self)
         self.label_start.setIndent(22)
@@ -91,6 +91,7 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
         self.labelue.setIndent(22)
         self.layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelue)
         self.value = QtWidgets.QDoubleSpinBox(self)
+        self.value.setMaximum(99999.0)
         self.value.setReadOnly(True)
         self.value.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.layout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.value)
@@ -99,13 +100,14 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
         self.label_std.setIndent(22)
         self.layout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_std)
         self.std = QtWidgets.QDoubleSpinBox(self)
+        self.std.setMaximum(99999.0)
         self.std.setReadOnly(True)
         self.std.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.layout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.std)
 
         self.setEnabled(False)
 
-        parent.addRow(self)
+        parent.addWidget(self)
 
     def set_values(self, x1, x2, val, std):
         self.start.setValue(x1)
@@ -147,12 +149,12 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.file_list_box.currentIndexChanged.connect(self.file_change)
 
         # Input boxes for tmin and tmax
-        self.tmin_group = LowTempCalValueGroup("Min Temperature", self.input_layout)
+        self.tmin_group = LowTempCalValueGroup("Min Temperature", self.value_layout)
 
         # Input boxes for tmax
-        self.tmax_group = LowTempCalValueGroup("Max Temperature", self.input_layout)
-        self.input_layout.addRow(self.tmax_group.radio)
-        self.input_layout.addRow(self.tmax_group)
+        self.tmax_group = LowTempCalValueGroup("Max Temperature", self.value_layout)
+        # self.input_layout.addWidget(self.tmax_group.radio)
+        # self.input_layout.addWidget(self.tmax_group)
 
         # select tmin automatically
         self.tmin_group.radio.toggle()
@@ -163,6 +165,8 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
     def show_current_graph(self, state):
         self.data[self.cur_index].line_current.set_visible(state)
         self.ax_current.get_yaxis().set_visible(state)
+        self.ax_current.relim(True)
+        self.ax_current.autoscale()
         self.canvas.draw()
 
 
