@@ -17,24 +17,19 @@ from matplotlib.backends.backend_qt5agg import (
 
 
 
-
 def calc_radiated_power(temp, surface_area=1.0187e-3, emissivity=4e-2):
     return surface_area * emissivity * const.Stefan_Boltzmann * (temp**4)
 
-def calc_thermal_conductivity(radiated_power, iv, temp_diff, surface_area=5.655e-7, length=0.01):
-    return np.abs(length*(iv-radiated_power)/(surface_area*temp_diff))
-
-def calc_thermal_conductivity2(power, current, voltage, temp_diff, surface_area=5.655e-7, length=0.01):
-    return np.abs(length*(current*voltage-power)/(surface_area*temp_diff))
-
-
+def calc_thermal_conductivity(power, current, voltage, temp_diff, surface_area=5.655e-7, length=0.01):
+    print(power, current, voltage, temp_diff, surface_area, length)
+    return length*(np.abs(current)*voltage-power)/(surface_area*temp_diff)
 
 
 
 class LowTempCalData:
 
-    dtype = np.dtype([('time',np.int), ('current',np.float),
-        ('voltage',np.float), ('temperature',np.float)])
+    dtype = np.dtype([('time',np.int), ('current',np.float64),
+        ('voltage',np.float64), ('temperature',np.float64)])
 
     def __init__(self, filename):
         self.filename = filename
@@ -60,11 +55,9 @@ class LowTempCalData:
         data = np.loadtxt(filename, delimiter=',', dtype=LowTempCalData.dtype)[::-1]
         self.time = data['time']
         self.temp = data['temperature']
-        self.current = data['current']
+        self.current = np.abs(data['current'])
         self.line = Line2D(self.time, self.temp, label=self.basename, visible=False)
         self.line_current = Line2D(self.time, self.current, label=self.basename, visible=False, color="red")
-
-
 
 
 
@@ -114,12 +107,11 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
 
         parent.addRow(self)
 
-    def setues(self, x1, x2, val, std):
+    def set_values(self, x1, x2, val, std):
         self.start.setValue(x1)
         self.end.setValue(x2)
         self.value.setValue(val)
         self.std.setValue(std)
-
 
 
 
@@ -133,6 +125,8 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.fig = Figure(facecolor="white")
         self.ax_current = self.fig.add_subplot(111, frameon=False)
         self.ax_temp = self.ax_current.twinx()
+        self.ax_current.yaxis.tick_right()
+        self.ax_temp.yaxis.tick_left()
         self.canvas = FigureCanvas(self.fig)
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
@@ -153,12 +147,12 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.file_list_box.currentIndexChanged.connect(self.file_change)
 
         # Input boxes for tmin and tmax
-        self.tmin_group = LowTempCalValueGroup("Min Temperature", self.value_layout)
+        self.tmin_group = LowTempCalValueGroup("Min Temperature", self.input_layout)
 
         # Input boxes for tmax
-        self.tmax_group = LowTempCalValueGroup("Max Temperature", self.value_layout)
-        self.value_layout.addRow(self.tmax_group.radio)
-        self.value_layout.addRow(self.tmax_group)
+        self.tmax_group = LowTempCalValueGroup("Max Temperature", self.input_layout)
+        self.input_layout.addRow(self.tmax_group.radio)
+        self.input_layout.addRow(self.tmax_group)
 
         # select tmin automatically
         self.tmin_group.radio.toggle()
@@ -179,17 +173,17 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         temp = d.temp[x1:x2]
         time = d.time[x1:x2]
         if self.tmax_group.radio.isChecked():
-            val = np.mean(temp)
-            std = np.std(temp)
-            self.tmax_group.setues(x1, x2, val, std)
+            val = np.mean(temp, dtype=np.float64)
+            std = np.std(temp, dtype=np.float64)
+            self.tmax_group.set_values(x1, x2, val, std)
             d.tmax_x1 = x1
             d.tmax_x2 = x2
             d.tmax = val
             d.tmax_std = std
         elif self.tmin_group.radio.isChecked():
-            val = np.mean(temp)
-            std = np.std(temp)
-            self.tmin_group.setues(x1, x2, val, std)
+            val = np.mean(temp, dtype=np.float64)
+            std = np.std(temp, dtype=np.float64)
+            self.tmin_group.set_values(x1, x2, val, std)
             d.tmin_x1 = x1
             d.tmin_x2 = x2
             d.tmin = val
@@ -199,9 +193,9 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         dtemp = d.tmax - d.tmin 
         if dtemp > 0.1:
             power = calc_radiated_power(d.tmax) # , self.spinbox_area.value())
-            current = np.mean(d.current[d.tmax_x1:d.tmax_x2])
+            current = np.mean(d.current[d.tmax_x1:d.tmax_x2], dtype=np.float64)
             d.voltage = self.spinbox_voltage.value()
-            d.kt = calc_thermal_conductivity(power, current*d.voltage, dtemp) #, self.spinbox_area.value(), self.spinbox_len.value())
+            d.kt = calc_thermal_conductivity(power, current, d.voltage, dtemp) #, self.spinbox_area.value(), self.spinbox_len.value())
             self.spinbox_kt.setValue(d.kt)
 
     def file_change(self, index):
@@ -219,8 +213,8 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.canvas.draw()
 
         d = self.data[index]
-        self.tmax_group.setues(d.tmax_x1, d.tmax_x2, d.tmax, d.tmax_std)
-        self.tmin_group.setues(d.tmin_x1, d.tmin_x2, d.tmin, d.tmin_std)
+        self.tmax_group.set_values(d.tmax_x1, d.tmax_x2, d.tmax, d.tmax_std)
+        self.tmin_group.set_values(d.tmin_x1, d.tmin_x2, d.tmin, d.tmin_std)
         self.spinbox_dt.setValue(d.dt)
         self.spinbox_voltage.setValue(d.voltage)
         self.spinbox_length.setValue(d.length)
@@ -256,6 +250,7 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ax_temp.add_line(item.line)
             self.ax_current.add_line(item.line_current)
             self.canvas.draw()
+
 
 
 if __name__ == '__main__':

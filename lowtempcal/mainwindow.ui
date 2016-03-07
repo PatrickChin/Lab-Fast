@@ -74,28 +74,8 @@
          <height>544</height>
         </rect>
        </property>
-       <layout class="QFormLayout" name="value_layout">
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_voltage">
-          <property name="text">
-           <string>Voltage</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_voltage"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_dt">
-          <property name="text">
-           <string>Time Step</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_dt"/>
-        </item>
-        <item row="0" column="0" colspan="2">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
          <widget class="QPushButton" name="file_import_button">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -108,95 +88,155 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2">
+        <item>
          <widget class="QComboBox" name="file_list_box"/>
         </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="label_kt">
-          <property name="text">
-           <string>Kt</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_kt">
-          <property name="focusPolicy">
-           <enum>Qt::WheelFocus</enum>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="maximum">
-           <double>20000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_len">
-          <property name="text">
-           <string>Length</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_length"/>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_area">
-          <property name="text">
-           <string>Area</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_area"/>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Power</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QDoubleSpinBox" name="spinbox_power">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-          <property name="maximum">
-           <double>20000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
+        <item>
          <widget class="QCheckBox" name="checkbox_show_current">
           <property name="text">
            <string>Show current graph</string>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QGroupBox" name="groupbox_input">
+          <property name="title">
+           <string>Inputs</string>
+          </property>
+          <layout class="QFormLayout" name="input_layout">
+           <property name="horizontalSpacing">
+            <number>2</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>1</number>
+           </property>
+           <property name="rightMargin">
+            <number>1</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_voltage">
+             <property name="text">
+              <string>Voltage</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="spinbox_voltage"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_dt">
+             <property name="text">
+              <string>Time Step</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="spinbox_dt"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_area">
+             <property name="text">
+              <string>Area</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="spinbox_area"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_len">
+             <property name="text">
+              <string>Length</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="spinbox_length"/>
+           </item>
+          </layout>
+          <zorder>spinbox_power</zorder>
+          <zorder>spinbox_kt</zorder>
+          <zorder>label_kt</zorder>
+          <zorder>label</zorder>
+          <zorder>label_voltage</zorder>
+          <zorder>spinbox_voltage</zorder>
+          <zorder>spinbox_dt</zorder>
+          <zorder>label_dt</zorder>
+          <zorder>spinbox_area</zorder>
+          <zorder>label_area</zorder>
+          <zorder>label_len</zorder>
+          <zorder>spinbox_length</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupbox_output">
+          <property name="title">
+           <string>Outputs</string>
+          </property>
+          <layout class="QFormLayout" name="output_layout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Power</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="spinbox_power">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <double>20000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_kt">
+             <property name="text">
+              <string>Kt</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="spinbox_kt">
+             <property name="focusPolicy">
+              <enum>Qt::WheelFocus</enum>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <double>20000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
-       <zorder>label_voltage</zorder>
-       <zorder>label_dt</zorder>
-       <zorder>spinbox_voltage</zorder>
-       <zorder>spinbox_dt</zorder>
-       <zorder>file_import_button</zorder>
-       <zorder>file_list_box</zorder>
-       <zorder>label_kt</zorder>
-       <zorder>spinbox_kt</zorder>
-       <zorder>label_len</zorder>
-       <zorder>spinbox_length</zorder>
-       <zorder>label_area</zorder>
-       <zorder>spinbox_area</zorder>
-       <zorder>label</zorder>
-       <zorder>spinbox_power</zorder>
-       <zorder>checkbox_show_current</zorder>
       </widget>
      </widget>
     </item>
