@@ -5,27 +5,28 @@ import matplotlib as mpl
 import scipy.stats as stats
 import scipy.constants as const
 
-from matplotlib.lines import Line2D
-from matplotlib.figure import Figure
-from matplotlib.widgets import SpanSelector
-
 try:
     from PyQt5 import QtCore, QtWidgets
     from PyQt5.uic import loadUiType
-    mpl.use('Qt5Agg')
     from matplotlib.backends.backend_qt5agg import (
         FigureCanvasQTAgg as FigureCanvas,
         NavigationToolbar2QT as NavigationToolbar)
+    mpl.use('Qt5Agg')
     qt5 = True
 except ImportError:
     from PyQt4 import QtCore
     from PyQt4 import QtGui as QtWidgets
     from PyQt4.uic import loadUiType
-    mpl.use('Qt4Agg')
     from matplotlib.backends.backend_qt4agg import (
         FigureCanvasQTAgg as FigureCanvas,
         NavigationToolbar2QT as NavigationToolbar)
+    mpl.use('Qt4Agg')
     qt5 = False
+
+from matplotlib.lines import Line2D
+from matplotlib.figure import Figure
+from matplotlib.widgets import SpanSelector
+
 
 def calc_radiated_power(temp, surface_area=1.0187e-3, emissivity=4e-2):
     return surface_area * emissivity * const.Stefan_Boltzmann * (temp**4)
