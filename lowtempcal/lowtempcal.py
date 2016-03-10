@@ -31,6 +31,7 @@ from matplotlib.widgets import SpanSelector
 def calc_radiated_power(temp, surface_area=1.0187e-3, emissivity=4e-2):
     return surface_area * emissivity * const.Stefan_Boltzmann * (temp**4)
 
+
 def calc_thermal_conductivity(power, current, voltage, temp_diff, surface_area=5.655e-7, length=0.01):
     return length*(np.abs(current)*voltage-power)/(surface_area*temp_diff)
 
@@ -38,8 +39,8 @@ def calc_thermal_conductivity(power, current, voltage, temp_diff, surface_area=5
 
 class LowTempCalData:
 
-    dtype = np.dtype([('time',np.int), ('current',np.float64),
-        ('voltage',np.float64), ('temperature',np.float64)])
+    dtype = np.dtype([('time',np.int), ('current',np.float),
+        ('voltage',np.float), ('temperature',np.float)])
 
     def __init__(self, filename, binary=False):
         self.filename = filename
@@ -122,6 +123,7 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
 
         parent.addWidget(self, parent.rowCount(), 0, 1, 2)
 
+
     def set_values(self, x1, x2, val, std):
         self.start.setValue(x1)
         self.end.setValue(x2)
@@ -178,8 +180,10 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_next.clicked.connect(self.next_page)
         self.button_prev.clicked.connect(self.prev_page)
 
+
     def next_page(self):
         self.pages.setCurrentIndex((self.pages.currentIndex()+1) % self.pages.count())
+
 
     def prev_page(self):
         self.pages.setCurrentIndex((self.pages.currentIndex()-1) % self.pages.count())
@@ -227,7 +231,6 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
             self.spinbox_cv_std2.setValue(std_err)
 
 
-
     def recalc_kt(self):
         d = self.data[self.cur_index]
 
@@ -271,6 +274,7 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tmax_group.end.setMaximum(ld)
         self.tmin_group.end.setMaximum(ld)
 
+
     def import_dialog(self):
         global qt5
         filenames = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select one or more data files to import')
@@ -279,6 +283,7 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         if len(filenames) < 1:
             return
         self.import_files(filenames)
+
 
     def import_files(self, filenames, binary=False):
         for f in filenames:
@@ -304,13 +309,12 @@ if __name__ == '__main__':
     # app.setStyle("breeze")
     main = LowTempCalApp()
     main.import_files([
-        './binary_data/2V.bin',
-        # './binary_data/3V.bin',
-        # './binary_data/4V.bin',
-        # './binary_data/5V.bin'
+        './binary_data/2V',
+        './binary_data/3V',
+        './binary_data/4V',
+        './binary_data/5V'
     ], binary=True)
     main.file_change(0)
 
     main.show()
     sys.exit(app.exec_())
-
