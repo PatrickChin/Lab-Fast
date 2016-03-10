@@ -9,4 +9,4 @@ for f in os.listdir("./data"):
     data = np.loadtxt("./data/"+f, delimiter=',', dtype=dtype)[::-1]
     f = os.path.basename(f)
     f = os.path.splitext(f)[0]
-    data.tofile("./binary_data/"+f+".bin")
+    data.tofile("./binary_data/"+f)
