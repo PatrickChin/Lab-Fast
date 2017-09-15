@@ -77,7 +77,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>215</width>
+          <width>212</width>
           <height>544</height>
          </rect>
         </property>
@@ -275,7 +275,7 @@
              <item row="1" column="0" colspan="2">
               <widget class="QCheckBox" name="checkbox_show_current">
                <property name="text">
-                <string>Show current graph</string>
+                <string>Plot electric current</string>
                </property>
               </widget>
              </item>
@@ -451,7 +451,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Import Files</string>
+            <string>Import</string>
            </property>
           </widget>
          </item>
@@ -497,7 +497,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="graph_layout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>

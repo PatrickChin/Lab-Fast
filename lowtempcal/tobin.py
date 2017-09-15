@@ -1,8 +1,9 @@
 import os
 import numpy as np
 
-dtype = np.dtype([('time',np.int), ('current',np.float),
-    ('voltage',np.float), ('temperature',np.float)])
+
+dtype = np.dtype([('time',np.int), ('current',np.float32),
+                  ('voltage',np.float32), ('temperature',np.float32)])
 
 os.mkdir("binary_data")
 for f in os.listdir("./data"):
