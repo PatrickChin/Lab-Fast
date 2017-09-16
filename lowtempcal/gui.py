@@ -100,6 +100,19 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graph_layout.addWidget(self.canvas)
         self.canvas.draw()
 
+        self.ax_current.set_xlabel('Time (t) / s')
+        self.ax_current.set_ylabel('Current (I) / A')
+        self.ax_current.yaxis.set_label_position("right")
+        self.ax_temp.set_xlabel('Time (t) / s')
+        self.ax_temp.set_ylabel('Temperature (T) / K')
+        self.ax_temp.yaxis.set_label_position("left")
+        # self.ax_temp.grid(True, which='both')
+
+        self.ax_temp.get_xaxis().set_minor_locator(mpl.ticker.AutoMinorLocator())
+        self.ax_temp.get_yaxis().set_minor_locator(mpl.ticker.AutoMinorLocator())
+        self.ax_temp.grid(b=True, which='major', color='black', linewidth=1.0)
+        self.ax_temp.grid(b=True, which='minor', color='gray', linewidth=0.5)
+
         # Show matplotlib toolbar
         self.toolbar = NavigationToolbar(self.canvas, self, coordinates=True)
         self.graph_layout.addWidget(self.toolbar)
@@ -182,7 +195,8 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
                 d.tmin_std = std
         else:
             slope, intercept, r_value, p_value, std_err = stats.linregress(time, temp)
-            self.spinbox_cv2.setValue(slope)
+            cv = calc_cv(np.mean(d.current[x1:x2]), d.voltage, self.spinbox_kt2.value(), temp[-1], d.tmin, slope)
+            self.spinbox_cv2.setValue(cv)
             self.spinbox_cv_pval2.setValue(p_value)
             self.spinbox_cv_rval2.setValue(r_value)
             self.spinbox_cv_std2.setValue(std_err)
@@ -236,7 +250,7 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         global qt5
         filenames = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select one or more data files to import')
         if qt5:
-            filenames = filenames[0] # python3 returns extra information
+            filenames = filenames[0] # qt5 returns extra information
         if len(filenames) < 1:
             return
         self.import_files(filenames)
