@@ -3,24 +3,12 @@ import numpy as np
 import matplotlib as mpl
 import scipy.stats as stats
 
-# Test for the PyQt5 library, if this fails import PyQt4
-try:
-    from PyQt5 import QtCore, QtWidgets
-    from PyQt5.uic import loadUiType
-    from matplotlib.backends.backend_qt5agg import (
-        FigureCanvasQTAgg as FigureCanvas,
-        NavigationToolbar2QT as NavigationToolbar)
-    mpl.use('Qt5Agg')
-    qt5 = True
-except ImportError:
-    from PyQt4 import QtCore
-    from PyQt4 import QtGui as QtWidgets
-    from PyQt4.uic import loadUiType
-    from matplotlib.backends.backend_qt4agg import (
-        FigureCanvasQTAgg as FigureCanvas,
-        NavigationToolbar2QT as NavigationToolbar)
-    mpl.use('Qt4Agg')
-    qt5 = False
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.uic import loadUiType
+from matplotlib.backends.backend_qt5agg import (
+    FigureCanvasQTAgg as FigureCanvas,
+    NavigationToolbar2QT as NavigationToolbar)
+mpl.use('Qt5Agg')
 
 from matplotlib.lines import Line2D
 from matplotlib.figure import Figure
@@ -84,7 +72,10 @@ class LowTempCalValueGroup(QtWidgets.QWidget):
 
 
 
-Ui_MainWindow, QMainWindow = loadUiType('mainwindow.ui')
+mainwindow_ui_file = os.path.dirname(os.path.realpath(__file__))
+mainwindow_ui_file = os.path.join(mainwindow_ui_file, 'mainwindow.ui')
+Ui_MainWindow, QMainWindow = loadUiType(mainwindow_ui_file)
+
 class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self):
@@ -247,10 +238,9 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     def import_dialog(self):
-        global qt5
-        filenames = QtWidgets.QFileDialog.getOpenFileNames(self, 'Select one or more data files to import')
-        if qt5:
-            filenames = filenames[0] # qt5 returns extra information
+        filenames = QtWidgets.QFileDialog.getOpenFileNames(self,
+                    'Select one or more data files to import')[0]
+                    # qt5 returns extra information
         if len(filenames) < 1:
             return
         self.import_files(filenames)
@@ -270,4 +260,3 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ax_temp.add_line(item.line)
             self.ax_current.add_line(item.line_current)
             self.canvas.draw()
-

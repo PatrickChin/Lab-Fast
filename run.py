@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from PyQt5 import QtCore, QtWidgets
 from lowtempcal.gui import LowTempCalApp
 
 
