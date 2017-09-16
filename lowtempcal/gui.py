@@ -10,7 +10,6 @@ from matplotlib.backends.backend_qt5agg import (
     NavigationToolbar2QT as NavigationToolbar)
 mpl.use('Qt5Agg')
 
-from matplotlib.lines import Line2D
 from matplotlib.figure import Figure
 from matplotlib.widgets import SpanSelector
 
@@ -84,7 +83,7 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.fig = Figure(facecolor="white")
         self.ax_current = self.fig.add_subplot(111, frameon=False)
-        self.ax_temp = self.ax_current.twinx()
+        self.ax_temp = self.ax_current.twinx() # create another plot for electric current
         self.ax_current.yaxis.tick_right()
         self.ax_temp.yaxis.tick_left()
         self.canvas = FigureCanvas(self.fig)
@@ -115,12 +114,12 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.button_file_import.clicked.connect(self.import_dialog)
         self.filenames = []
         self.data = []
-        self.cur_index = 0
+        self.cur_index = -1
 
         # file selector list
         self.combobox_filelist.currentIndexChanged.connect(self.file_change)
 
-        # Input boxes for tmin and tmax
+        # Create input boxes for tmin and tmax
         self.tmin_group = LowTempCalValueGroup("Min Temperature", self.value_layout)
         self.tmax_group = LowTempCalValueGroup("Max Temperature", self.value_layout)
 
@@ -135,6 +134,7 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.span = SpanSelector(self.ax_temp, self.on_span_select,
                                  'horizontal', useblit=False, span_stays=False,
                                  rectprops=dict(alpha=0.1, facecolor='blue'))
+        self.span.set_visible(False)
 
         self.button_next.clicked.connect(self.next_page)
         self.button_prev.clicked.connect(self.prev_page)
@@ -168,25 +168,27 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         time = d.time[x1:x2]
 
         if self.pages.currentIndex() == 0:
+
+            val = np.mean(temp, dtype=np.float64)
+            std = np.std(temp, dtype=np.float64)
+            self.tmin_group.set_values(x1, x2, val, std)
+
             if self.tmax_group.radio.isChecked():
-                val = np.mean(temp, dtype=np.float64)
-                std = np.std(temp, dtype=np.float64)
-                self.tmax_group.set_values(x1, x2, val, std)
                 d.tmax_x1 = x1
                 d.tmax_x2 = x2
                 d.tmax = val
                 d.tmax_std = std
             elif self.tmin_group.radio.isChecked():
-                val = np.mean(temp, dtype=np.float64)
-                std = np.std(temp, dtype=np.float64)
-                self.tmin_group.set_values(x1, x2, val, std)
                 d.tmin_x1 = x1
                 d.tmin_x2 = x2
                 d.tmin = val
                 d.tmin_std = std
-        else:
+
+        elif self.pages.currentIndex() == 1:
+
             slope, intercept, r_value, p_value, std_err = stats.linregress(time, temp)
-            cv = calc_cv(np.mean(d.current[x1:x2]), d.voltage, self.spinbox_kt2.value(), temp[-1], d.tmin, slope)
+            cv = calc_cv(np.mean(d.current[x1:x2]), d.voltage,
+                         self.spinbox_kt2.value(), temp[-1], d.tmin, slope)
             self.spinbox_cv2.setValue(cv)
             self.spinbox_cv_pval2.setValue(p_value)
             self.spinbox_cv_rval2.setValue(r_value)
@@ -241,12 +243,13 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
         filenames = QtWidgets.QFileDialog.getOpenFileNames(self,
                     'Select one or more data files to import')[0]
                     # qt5 returns extra information
-        if len(filenames) < 1:
-            return
         self.import_files(filenames)
 
 
     def import_files(self, filenames, binary=False):
+        if len(filenames) < 1:
+            return
+        self.span.set_visible(True)
         for f in filenames:
             f = os.path.abspath(f)
             if f in self.filenames:
