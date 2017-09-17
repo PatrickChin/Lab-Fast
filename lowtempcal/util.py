@@ -1,4 +1,4 @@
-import os.path.basename
+import os.path
 import numpy as np
 import scipy.constants as const
 from matplotlib.lines import Line2D

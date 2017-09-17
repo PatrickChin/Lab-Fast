@@ -13,6 +13,8 @@ mpl.use('Qt5Agg')
 from matplotlib.figure import Figure
 from matplotlib.widgets import SpanSelector
 
+from lowtempcal.util import LowTempCalData
+
 
 class LowTempCalValueGroup(QtWidgets.QWidget):
 
@@ -171,18 +173,20 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
             val = np.mean(temp, dtype=np.float64)
             std = np.std(temp, dtype=np.float64)
-            self.tmin_group.set_values(x1, x2, val, std)
 
             if self.tmax_group.radio.isChecked():
                 d.tmax_x1 = x1
                 d.tmax_x2 = x2
                 d.tmax = val
                 d.tmax_std = std
+                self.tmax_group.set_values(x1, x2, val, std)
+
             elif self.tmin_group.radio.isChecked():
                 d.tmin_x1 = x1
                 d.tmin_x2 = x2
                 d.tmin = val
                 d.tmin_std = std
+                self.tmin_group.set_values(x1, x2, val, std)
 
         elif self.pages.currentIndex() == 1:
 
@@ -247,19 +251,20 @@ class LowTempCalApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     def import_files(self, filenames, binary=False):
-        if len(filenames) < 1:
-            return
-        self.span.set_visible(True)
         for f in filenames:
-            f = os.path.abspath(f)
-            if f in self.filenames:
-                print('Not importing \"{}\", it was already imported'.format(f))
-                continue
-            print("Adding \"{}\"".format(f))
-            self.filenames.append(f)
-            self.combobox_filelist.addItem(os.path.basename(f))
-            item = LowTempCalData(f, binary)
-            self.data.append(item)
-            self.ax_temp.add_line(item.line)
-            self.ax_current.add_line(item.line_current)
-            self.canvas.draw()
+            self.import_file(f, binary)
+
+    def import_file(self, filename, binary=False):
+        self.span.set_visible(True)
+        filename = os.path.abspath(filename)
+        if filename in self.filenames:
+            print('Not importing \"{}\", it was already imported'.format(filename))
+            return
+        print("Adding \"{}\"".format(filename))
+        self.filenames.append(filename)
+        self.combobox_filelist.addItem(os.path.basename(filename))
+        item = LowTempCalData(filename, binary)
+        self.data.append(item)
+        self.ax_temp.add_line(item.line)
+        self.ax_current.add_line(item.line_current)
+        self.canvas.draw()
