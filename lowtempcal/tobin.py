@@ -1,13 +1,22 @@
 import os
 import numpy as np
+from lowtempcal import LowTempCalData
 
+def tobin(infile, outfile, overwrite=False):
+    bintype = np.dtype([('time',np.int), ('current',np.float),
+                         ('voltage',np.float), ('temperature',np.float)])
 
-dtype = np.dtype([('time',np.int), ('current',np.float32),
-                  ('voltage',np.float32), ('temperature',np.float32)])
+    infile = os.path.abspath(infile)
+    outfile = os.path.abspath(outfile)
 
-os.mkdir("binary_data")
-for f in os.listdir("./data"):
-    data = np.loadtxt("./data/"+f, delimiter=',', dtype=dtype)[::-1]
-    f = os.path.basename(f)
-    f = os.path.splitext(f)[0]
-    data.tofile("./binary_data/"+f)
+    if not overwrite and os.path.exists(outfile):
+        return
+
+    outdir = os.path.dirname(outfile)
+    if not os.path.isdir(outdir):
+        print("Creating directory: ", outdir)
+        os.mkdir(outdir)
+
+    data = np.loadtxt(infile, delimiter=',',
+            dtype=LowTempCalData.dtype)
+    data.tofile(outfile)

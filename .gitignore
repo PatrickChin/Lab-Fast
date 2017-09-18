@@ -1,3 +1,7 @@
+
+# binary example data files
+binary-data/*
+
 # YCM files
 .ycm_extra_conf.py
 .ycm_extra_conf.pyc

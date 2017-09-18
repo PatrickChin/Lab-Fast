@@ -15,8 +15,8 @@ def calc_thermal_conductivity(power, current, voltage, temp_diff,
 
 class LowTempCalData:
 
-    dtype = np.dtype([('time', np.int), ('current', np.float32),
-                      ('voltage', np.float32), ('temperature', np.float32)])
+    dtype = np.dtype([('time', np.int), ('current', np.float),
+                      ('voltage', np.float), ('temperature', np.float)])
 
     def __init__(self, filename, binary=False):
         self.filename = filename

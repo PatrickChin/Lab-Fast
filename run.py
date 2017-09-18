@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 from PyQt5 import QtCore, QtWidgets
-from lowtempcal.gui import LowTempCalApp
+import lowtempcal
+# from lowtempcal.gui import LowTempCalApp
 
 
 if __name__ == '__main__':
@@ -10,8 +11,14 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     # app.setStyle("breeze")
 
-    app_window = LowTempCalApp()
-    app_window.import_file('./lowtempcal/data/example_data_5V')
+    app_window = lowtempcal.LowTempCalApp()
+    app_window.show()
+
+    lowtempcal.tobin('./lowtempcal/data/example_data_5V',
+                     './lowtempcal/binary-data/example_data_5V')
+
+    app_window.import_file('./lowtempcal/binary-data/example_data_5V',
+                           binary=True)
     # app_window.import_files([
     #     './binary_data/2V',
     #     './binary_data/3V',
@@ -20,5 +27,4 @@ if __name__ == '__main__':
     # ], binary=True)
     app_window.file_change(0)
 
-    app_window.show()
     sys.exit(app.exec_())
